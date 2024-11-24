@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import SlideViewer from "./SlideViewer";
+import { db } from "./firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [slides, setSlides] = useState([]);
+
+  useEffect(() => {
+    const fetchSlides = async () => {
+      const querySnapshot = await getDocs(collection(db, "slides"));
+      const slidesData = querySnapshot.docs.map((doc) => doc.data());
+      setSlides(slidesData);
+    };
+
+    fetchSlides();
+  }, []);
+
+  return <SlideViewer slides={slides} />;
 }
 
 export default App;
